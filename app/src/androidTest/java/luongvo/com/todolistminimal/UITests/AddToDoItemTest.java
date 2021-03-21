@@ -40,8 +40,7 @@ import static org.hamcrest.Matchers.anything;
 
 
 @RunWith(JUnit4.class)
-public class ToDoItemTest {
-    private static final String TAG = "MyActivity";
+public class AddToDoItemTest {
 
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule =
@@ -176,7 +175,6 @@ public class ToDoItemTest {
                 .perform(setTime(23, 59));
 
         onView(withText("OK")).perform(ViewActions.click());
-        //SystemClock.sleep(1000);
     }
 
     @Test
@@ -208,10 +206,6 @@ public class ToDoItemTest {
 
         onView(withId(R.id.addTodoBtn))
                 .perform(ViewActions.click());
-
-        // useful for leanerLayout
-        //onData(anything()).inAdapterView(withId(R.id.todoList)).atPosition(0).perform(ViewActions.click());
-
     }
 
     public static ViewAction setDate(final int year, final int monthOfYear, final int dayOfMonth) {

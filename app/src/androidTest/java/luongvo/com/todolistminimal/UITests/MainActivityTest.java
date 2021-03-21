@@ -2,6 +2,7 @@ package luongvo.com.todolistminimal.UITests;
 
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.widget.AdapterView;
 
 import org.junit.Rule;
@@ -25,6 +26,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
 
 @RunWith(JUnit4.class)
 public class MainActivityTest {
@@ -64,10 +66,6 @@ public class MainActivityTest {
                 .perform(ViewActions.click());
     }
 
-    /*@Test
-    public void selectTab() {
 
-
-    }*/
 
 }
