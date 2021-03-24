@@ -1,11 +1,15 @@
 package luongvo.com.todolistminimal.UITests;
 
+import android.support.test.espresso.NoMatchingViewException;
+import android.support.test.espresso.PerformException;
 import android.support.test.espresso.action.ViewActions;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 
 import com.wdullaer.materialdatetimepicker.date.DayPickerView;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,19 +21,24 @@ import java.util.Calendar;
 import luongvo.com.todolistminimal.MainActivity;
 import luongvo.com.todolistminimal.R;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
+import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
@@ -73,14 +82,16 @@ public class CreatedTaskTest {
                 .perform(ViewActions.click());
     }
 
-    @Test
-    public void selectTab() {
-        //onView(allOf(withId(R.id.todoList), isDisplayed())).perform(ViewActions.click());
+    @After
+    public void clear() {
+        try {
+            onData(anything()).inAdapterView(allOf(withId(R.id.todoList), isDisplayed())).atPosition(0)
+                    .perform(ViewActions.click());
+            onView(withId(R.id.deleteTodoBtn))
+                    .perform(ViewActions.click());
+        } catch (PerformException ignored) {
 
-        //onView(withId(R.id.view_pager)).perform(ViewActions.swipeLeft());
-
-        onData(anything()).inAdapterView(allOf(withId(R.id.todoList), isDisplayed())).atPosition(0)
-                .perform(ViewActions.click());
+        }
     }
 
     @Test
@@ -146,5 +157,62 @@ public class CreatedTaskTest {
                 .atPosition(0)
                 .onChildView(withText("Buy two apples"))
                 .check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void checkDoneCheck() {
+        onData(anything()).inAdapterView(allOf(withId(R.id.todoList), isDisplayed())).atPosition(0)
+                .onChildView(withId(R.id.checkDone))
+                .check(matches(allOf(isDisplayed(),
+                        isClickable(),
+                        not(isChecked())
+                )));
+    }
+
+    @Test
+    public void todoContentCheck() {
+        onData(anything()).inAdapterView(allOf(withId(R.id.todoList), isDisplayed())).atPosition(0)
+                .onChildView(withId(R.id.todoContent))
+                .check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void clockReminderCheck() {
+        onData(anything()).inAdapterView(allOf(withId(R.id.todoList), isDisplayed())).atPosition(0)
+                .onChildView(withId(R.id.clockReminder))
+                .check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void checkDoneMakeChecked() {
+        onData(anything()).inAdapterView(allOf(withId(R.id.todoList), isDisplayed())).atPosition(0)
+                .onChildView(withId(R.id.checkDone))
+                .perform(ViewActions.click())
+                .check(matches(allOf(isDisplayed(),
+                        isClickable(),
+                        isChecked()
+                )));
+    }
+
+    @Test
+    public void  deleteToDoItemByCleanAllDone() {
+        onData(anything()).inAdapterView(allOf(withId(R.id.todoList), isDisplayed())).atPosition(0)
+                .onChildView(withId(R.id.checkDone))
+                .perform(ViewActions.click());
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(ViewMatchers.withText(R.string.clean_all_done))
+                .perform(ViewActions.click());
+
+        onView(withId(R.id.actionButton))
+                .perform(ViewActions.click());
+        onView(withId(R.id.reminderSwitch))
+                .perform(ViewActions.click());
+        onView(withId(R.id.todoEditText))
+                .perform(typeText("Buy one orange"));
+        onView(withId(R.id.addTodoBtn))
+                .perform(ViewActions.click());
+
+        onData(anything()).inAdapterView(allOf(withId(R.id.todoList), isDisplayed()))
+                .check(matches(not(hasDescendant(withText("Buy one apple")))));
     }
 }
