@@ -1,6 +1,5 @@
 package luongvo.com.todolistminimal.UITests;
 
-import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.PerformException;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
@@ -38,7 +37,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
@@ -195,7 +193,7 @@ public class CreatedTaskTest {
     }
 
     @Test
-    public void  deleteToDoItemByCleanAllDone() {
+    public void deleteToDoItemByCleanAllDone() {
         onData(anything()).inAdapterView(allOf(withId(R.id.todoList), isDisplayed())).atPosition(0)
                 .onChildView(withId(R.id.checkDone))
                 .perform(ViewActions.click());
