@@ -206,6 +206,11 @@ public class AddToDoItemTest {
 
         onView(withId(R.id.addTodoBtn))
                 .perform(ViewActions.click());
+
+        onData(anything()).inAdapterView(allOf(withId(R.id.todoList), isDisplayed())).atPosition(0)
+                .perform(ViewActions.click());
+        onView(withId(R.id.deleteTodoBtn))
+                .perform(ViewActions.click());
     }
 
     public static ViewAction setDate(final int year, final int monthOfYear, final int dayOfMonth) {

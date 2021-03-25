@@ -35,6 +35,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(JUnit4.class)
 public class NotificationsTest {
@@ -98,6 +99,8 @@ public class NotificationsTest {
 
         UiObject2 title = device.findObject(By.text(NOTIFICATION_TITLE));
         UiObject2 text = device.findObject(By.text(NOTIFICATION_TEXT));
+        assertNotNull(title);
+        assertNotNull(text);
         assertEquals(NOTIFICATION_TITLE, title.getText());
         assertEquals(NOTIFICATION_TEXT, text.getText());
         device.pressBack();
