@@ -129,16 +129,7 @@ public class AddToDoItemTest {
         onView(withId(R.id.reminderSwitch))
                 .perform(ViewActions.click());
 
-        onView(withId(R.id.buttonSetDate))
-                .perform(ViewActions.click());
-
-        onView(isAssignableFrom(DayPickerView.class))
-                .check(matches(isDisplayed()))
-                .perform(setDate(calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)));
-
-        onView(withText("OK")).perform(ViewActions.click());
+        performSetDate(calendar);
 
         String month;
         if ((calendar.get(Calendar.MONTH) + 1) < 10) {
@@ -166,15 +157,7 @@ public class AddToDoItemTest {
     public void setTime() {
         onView(withId(R.id.reminderSwitch))
                 .perform(ViewActions.click());
-
-        onView(withId(R.id.buttonSetTime))
-                .perform(ViewActions.click());
-
-        onView(isAssignableFrom(RadialPickerLayout.class))
-                .check(matches(isDisplayed()))
-                .perform(setTime(23, 59));
-
-        onView(withText("OK")).perform(ViewActions.click());
+        performSetTime();
     }
 
     @Test
@@ -185,21 +168,8 @@ public class AddToDoItemTest {
         onView(withId(R.id.reminderSwitch))
                 .perform(ViewActions.click());
 
-        onView(withId(R.id.buttonSetDate))
-                .perform(ViewActions.click());
-        onView(isAssignableFrom(DayPickerView.class))
-                .check(matches(isDisplayed()))
-                .perform(setDate(calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)));
-        onView(withText("OK")).perform(ViewActions.click());
-
-        onView(withId(R.id.buttonSetTime))
-                .perform(ViewActions.click());
-        onView(isAssignableFrom(RadialPickerLayout.class))
-                .check(matches(isDisplayed()))
-                .perform(setTime(23, 59));
-        onView(withText("OK")).perform(ViewActions.click());
+        performSetDate(calendar);
+        performSetTime();
 
         onView(withId(R.id.todoEditText))
                 .perform(typeText("Buy one apple"));
@@ -211,6 +181,26 @@ public class AddToDoItemTest {
                 .perform(ViewActions.click());
         onView(withId(R.id.deleteTodoBtn))
                 .perform(ViewActions.click());
+    }
+
+    private void performSetTime(){
+        onView(withId(R.id.buttonSetTime))
+                .perform(ViewActions.click());
+        onView(isAssignableFrom(RadialPickerLayout.class))
+                .check(matches(isDisplayed()))
+                .perform(setTime(23, 59));
+        onView(withText("OK")).perform(ViewActions.click());
+    }
+
+    private void performSetDate(Calendar calendar){
+        onView(withId(R.id.buttonSetDate))
+                .perform(ViewActions.click());
+        onView(isAssignableFrom(DayPickerView.class))
+                .check(matches(isDisplayed()))
+                .perform(setDate(calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)));
+        onView(withText("OK")).perform(ViewActions.click());
     }
 
     public static ViewAction setDate(final int year, final int monthOfYear, final int dayOfMonth) {
