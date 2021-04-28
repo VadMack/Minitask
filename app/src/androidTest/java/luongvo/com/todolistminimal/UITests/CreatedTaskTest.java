@@ -237,7 +237,6 @@ public class CreatedTaskTest {
         onView(withText("NEXT 7 DAYS"))
                 .check(matches(isDisplayed()))
                 .perform(ViewActions.click());
-        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         UiObject2 todoItem = device.findObject(By.text(TITLE));
         assertNotNull(todoItem);
         assertEquals(todoItem.getText(), TITLE);

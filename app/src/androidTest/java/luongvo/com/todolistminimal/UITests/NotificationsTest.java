@@ -5,6 +5,7 @@ import android.support.test.espresso.PerformException;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.uiautomator.By;
+import android.support.test.uiautomator.Direction;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.Until;
@@ -36,15 +37,20 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @RunWith(JUnit4.class)
 public class NotificationsTest {
+
+    UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
+    String NOTIFICATION_TITLE = "Task to be done";
+
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule =
             new ActivityTestRule<>(MainActivity.class);
 
-    @Before
-    public void setUp() {
+    public void createTaskWithReminder(String title) {
         onView(withId(R.id.actionButton))
                 .perform(ViewActions.click());
 
@@ -71,7 +77,7 @@ public class NotificationsTest {
         onView(withText("OK")).perform(ViewActions.click());
 
         onView(withId(R.id.todoEditText))
-                .perform(typeText("Buy one apple"));
+                .perform(typeText(title));
 
         onView(withId(R.id.addTodoBtn))
                 .perform(ViewActions.click());
@@ -90,10 +96,9 @@ public class NotificationsTest {
     }
 
     @Test
-    public void receiveNotification() {
-        String NOTIFICATION_TITLE = "Task to be done";
-        String NOTIFICATION_TEXT = "Buy one apple";
-        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+    public void receiveNotification() throws InterruptedException {
+        String NOTIFICATION_TEXT = "Create a website";
+        createTaskWithReminder(NOTIFICATION_TEXT);
         device.openNotification();
         device.wait(Until.hasObject(By.text(NOTIFICATION_TITLE)), 600000);
 
@@ -103,6 +108,42 @@ public class NotificationsTest {
         assertNotNull(text);
         assertEquals(NOTIFICATION_TITLE, title.getText());
         assertEquals(NOTIFICATION_TEXT, text.getText());
+        UiObject2 clearButton = device.findObject(By.text("Clear all"));
+        clearButton.click();
         device.pressBack();
     }
+
+    @Test
+    public void notificationNotFoundBeforeSelectedTime() {
+        createTaskWithReminder("Do washing");
+        device.openNotification();
+        device.wait(Until.hasObject(By.text(NOTIFICATION_TITLE)), 5);
+        UiObject2 elem = device.findObject(By.text(NOTIFICATION_TITLE));
+        assertNull(elem);
+        device.pressBack();
+    }
+
+    @Test
+    public void notificationNotFoundTaskWithoutReminder() {
+        createTaskWithoutReminder("Write an essay");
+        device.openNotification();
+        device.wait(Until.hasObject(By.text(NOTIFICATION_TITLE)), 60000);
+        UiObject2 elem = device.findObject(By.text(NOTIFICATION_TITLE));
+        assertNull(elem);
+        device.pressBack();
+    }
+
+    private void createTaskWithoutReminder(String title) {
+        device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        onView(withId(R.id.actionButton))
+                .perform(ViewActions.click());
+
+        onView(withId(R.id.todoEditText))
+                .perform(typeText(title));
+
+        onView(withId(R.id.addTodoBtn))
+                .perform(ViewActions.click());
+    }
+
+
 }
