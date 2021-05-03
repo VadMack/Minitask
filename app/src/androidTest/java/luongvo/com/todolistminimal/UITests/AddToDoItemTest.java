@@ -28,6 +28,7 @@ import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -35,6 +36,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 
 @RunWith(JUnit4.class)
@@ -179,6 +182,31 @@ public class AddToDoItemTest {
                 .perform(ViewActions.click());
         onView(withId(R.id.deleteTodoBtn))
                 .perform(ViewActions.click());
+    }
+
+    @Test
+    public void createTaskDateNotValid() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 1999);
+
+        onView(withId(R.id.reminderSwitch))
+                .perform(ViewActions.click());
+
+        performSetDate(calendar);
+
+        onView(withText("Date not valid!"))
+                .check(matches(
+                        isDisplayed()));
+    }
+
+    @Test
+    public void createTaskWithEmptyStringError(){
+        onView(withId(R.id.addTodoBtn))
+                .perform(ViewActions.click());
+
+        onView(withText("Empty task detected! No task added!")).inRoot(
+                withDecorView(not(is(activityTestRule.getActivity().getWindow().getDecorView()))))
+                .check(matches(isDisplayed()));
     }
 
     private void performSetTime(){
